@@ -5,6 +5,7 @@ let db = {}
 db.insert = function(connection, sql, paras, callback){
     connection.query(sql, paras, function (error, results, fields) {
         if (error) throw error;
+        console.log(results)
         callback(results.insertId);//返回插入的id
     });
 }
@@ -27,8 +28,8 @@ db.connection = function(){
     let connection = mysql.createConnection({
         host:'localhost',
         user:'root',
-        password:'root',
-        database:'book',
+        password:'123456',
+        database:'pointsystem',
         port:3306
     });
     //数据库连接
