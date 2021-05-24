@@ -51,33 +51,59 @@ router.post('/', function (req, res, next) {
   let username = inform.newusername
   let password = inform.newpassword
 
+  // SQL语句
   let isExistUser = "select user_name from users"
   let newUserSQL = 'INSERT INTO users (user_id,user_name,user_password,user_create_time) VALUES (1002,' + '"' + username + '"' + ',' + '"' + password + '"' + ',' + '"' + (new Date()).Format("yyyy-MM-dd hh:mm:ss") + '"' + ')'
 
-  // let conn = db.connection()
-  // db.queryData(conn, isExistUser, '', function (resx) {
-  //   console.log(resx)
-
-  //   for (var i=0; i<resx.length; i++) {
-  //     if (resx[i].user_name == username) {
-  //       res.send({
-  //         state: '0',
-  //         message: '用户名重复'
-  //       })
-  //       break;
-  //     }
-  //   }
-  // })
-  // db.close(conn)
-
-
-
-  // console.log(newUserSQL)
+  var isExist = false;
   let conn = db.connection()
-  db.insert(conn, newUserSQL, '', function (insertId) {
-    console.log(insertId + "success")
+  db.queryData(conn, isExistUser, '', function (resx) {
+    console.log(resx)
+    for (var i = 0; i < resx.length; i++) {
+      if (resx[i].user_name == username) {
+        res.send({
+          state: '0',
+          message: '用户名重复'
+        })
+        isExist = true;
+        break
+      } else {
+        isExist = false
+      }
+    }
   })
+
+  db.insert(conn, newUserSQL, '', function (insertId) {
+    if (!isExist) {
+      console.log(insertId + "success")
+      res.send({
+        state: '1',
+        message: '注册成功'
+      })
+      isExist = false
+    }
+    else {
+      isExist = false
+    }
+  })
+  
   db.close(conn)
+
+
+  // if(!isExist){
+  //   let conn = db.connection()
+  //   db.insert(conn, newUserSQL, '', function (insertId) {
+  //     console.log(insertId + "success")
+  //     res.send({
+  //       state: '1',
+  //       message: '注册成功'
+  //     })
+  //   })
+  //   isExist = false
+  //   db.close(conn)
+  // }
+  // console.log(newUserSQL)
+
 
 })
 
