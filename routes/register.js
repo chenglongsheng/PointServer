@@ -22,24 +22,40 @@ router.get('/', function (req, res, next) {
 //   res.send('这是注册界面Post');  
 // });
 
+
+/* POST register listing. */
 router.post('/', function (req, res, next) {
   let inform = req.body.params
   let username = inform.newusername
   let password = inform.newpassword
-  // let newUserSQL = 'insert into users (user_id,user_name,user_password) values (1001,"' + username + '","' + password + '"+'
+
+  let isExistUser = "select user_name from users"
   let newUserSQL = 'INSERT INTO users (user_id,user_name,user_password) VALUES(1002,' + '"' + username + '"' + ',' + '"' + password + '"' + ')'
-  // console.log(newUserSQL)
+
   let conn = db.connection()
-  db.insert(conn, newUserSQL, '', function (insertId) {
-    console.log(insertId + "success")
-    
+  db.queryData(conn, isExistUser, '', function (resx) {
+    console.log(resx)
+
+    for (var i=0; i<resx.length; i++) {
+      if (resx[i].user_name == username) {
+        res.send({
+          state: '0',
+          message: '用户名重复'
+        })
+        break;
+      }
+    }
   })
-  db.close()
-  if(true){
-    console.log(1)
-  } else {
-    console.log(0)
-  }
+  db.close(conn)
+
+
+  
+  // // console.log(newUserSQL)
+  // let conn = db.connection()
+  // db.insert(conn, newUserSQL, '', function (insertId) {
+  //   console.log(insertId + "success")
+  // })
+  // db.close()
 
 })
 
