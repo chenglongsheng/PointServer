@@ -34,6 +34,46 @@ router.get('/', function (req, res, next) {
   res.send(feedBack);
 });
 
+// 检查用户信息
+router.get('/check', function (req, res, next) {
+  let inform = req.query
+  var username = inform.newusername
+  let querySQL = "select * from users"
+
+  let conn = db.connection()
+
+  db.queryCheck(conn, querySQL, "", function (resx) {
+    console.log(resx)
+    console.log(inform)
+
+    for (var i = 0; i < resx.length; i++) {
+      var flag = 0
+      var existUsername = resx[i].user_name
+      if (existUsername == username) {
+        flag = 1
+        break
+      } else {
+        flag = 0
+      }
+    }
+    if (flag) {
+      res.send({
+        state: "fail",
+        message: "用户名已被使用"
+      })
+    } else {
+      res.send({
+        state: "success",
+        message: "用户名未被使用"
+      })
+    }
+  })
+
+  db.close(conn)
+  // console.log(username)
+
+});
+
 // router.post('/', function (req, res, next) {
 //   console.log(req.body)
 //   let newUser = req.body
@@ -58,12 +98,12 @@ router.post('/', function (req, res, next) {
   var isExist = false;
   let conn = db.connection()
   db.queryData(conn, isExistUser, '', function (resx) {
-    console.log(resx)
+    // console.log(resx)
     for (var i = 0; i < resx.length; i++) {
       if (resx[i].user_name == username) {
         res.send({
           state: '0',
-          message: '用户名重复'
+          message: '用户名已注册'
         })
         isExist = true;
         break
@@ -86,7 +126,7 @@ router.post('/', function (req, res, next) {
       isExist = false
     }
   })
-  
+
   db.close(conn)
 
 

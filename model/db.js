@@ -3,6 +3,18 @@ let db = {}
 
 var arr = []
 
+// 检查用户信息
+db.queryCheck = function (connection, sql, paras, callback) {
+    connection.query(sql, paras, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+        } else {
+            // console.log(results)
+            callback(results)
+        }
+    })
+}
+
 // 查询
 db.queryData = function (connection, sql, paras, callback) {
     let result = connection.query(sql, paras, function (error, results, fields) {
