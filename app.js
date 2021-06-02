@@ -8,14 +8,15 @@ var bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var registerRouter = require('./routes/register');
+var loginRouter = require('./routes/login')
 
 var app = express();
 let router = express.Router();
-let db = require('./model/db'); 
+let db = require('./model/db');
 
 
 app.use(bodyParser.urlencoded({
-  extended:true
+  extended: true
 }));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -61,23 +62,24 @@ app.use(function (req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/register',registerRouter)
+app.use('/register', registerRouter)
+app.use('/login', loginRouter)
 
-//插入测试
-app.get('/dbtest',function(req, res){
-    let project = {project_name: 'test', create_time: '2017-03-28 14:09:29'};
-    let sqlString = 'INSERT INTO project SET ?';
-    let connection = db.connection();
-    db.insert(connection, sqlString, project, function(id){
-        console.log('inserted id is:' + id);
-    });
-    db.close(connection);
-	res.send(JSON.stringify(project))
-    return;
+// 插入测试
+app.get('/dbtest', function (req, res) {
+  let project = { project_name: 'test', create_time: '2017-03-28 14:09:29' };
+  let sqlString = 'INSERT INTO project SET ?';
+  let connection = db.connection();
+  db.insert(connection, sqlString, project, function (id) {
+    console.log('inserted id is:' + id);
+  });
+  db.close(connection);
+  res.send(JSON.stringify(project))
+  return;
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
@@ -97,7 +99,7 @@ app.use(function(req, res, next) {
 
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
